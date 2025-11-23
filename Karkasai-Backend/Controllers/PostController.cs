@@ -38,7 +38,7 @@ public class PostController : ControllerBase
             return Forbid();
 
         var posts = await _postService.GetAllPostsAsync(groupId, token);
-        if (!posts.Any()) return NotFound();
+        // if (!posts.Any()) return NotFound();
 
         return Ok(posts);
     }
