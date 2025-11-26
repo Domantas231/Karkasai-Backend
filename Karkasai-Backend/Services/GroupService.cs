@@ -75,7 +75,9 @@ public class GroupService : IGroupService
         group.Title = dto.Title;
         group.Description = dto.Description;
         group.MaxMembers = dto.MaxMembers;
-        group.Tags = tags;
+
+        group.Tags.Clear();
+        foreach (var tag in tags) group.Tags.Add(tag);
 
         await _groupRepository.SaveChangesAsync(token);
 
@@ -101,10 +103,13 @@ public class GroupService : IGroupService
         if (group.CurrentMembers >= group.MaxMembers)
             return null;
 
-        group.Members.Add(newMember);
-        group.CurrentMembers = group.Members.Count;
-
-        await _groupRepository.SaveChangesAsync(token);
+        if (!group.Members.Contains(newMember))
+        {
+            group.Members.Add(newMember);
+            group.CurrentMembers = group.Members.Count;
+            
+            await _groupRepository.SaveChangesAsync(token);
+        }
 
         return MapToDto(group);
     }
