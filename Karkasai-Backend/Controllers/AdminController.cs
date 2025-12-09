@@ -55,6 +55,7 @@ public class AdminController : ControllerBase
                     c.Id,
                     c.Content,
                     c.DateCreated,
+                    c.ImageUrl,
                     new UserDto(c.User.UserName!)
                 )).ToList()
             }).ToList()

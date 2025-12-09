@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,17 +19,20 @@ public class GroupController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly ISessionService _sessionService;
+    private readonly IValidator<UploadImageDto> _uploadImageValidator;
 
     public GroupController(
         IGroupService groupService,
         UserManager<User> userManager,
         IJwtTokenService jwtTokenService,
-        ISessionService sessionService)
+        ISessionService sessionService,
+        IValidator<UploadImageDto> uploadImageValidator)
     {
         _groupService = groupService;
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
         _sessionService = sessionService;
+        _uploadImageValidator = uploadImageValidator;
     }
 
     [HttpGet]
@@ -84,8 +88,15 @@ public class GroupController : ControllerBase
     
     [HttpPut("{groupId}/image")]
     [Authorize(Roles = Roles.User)]
-    public async Task<IActionResult> AddImage(int groupId, [FromForm] UploadImageDto dto, CancellationToken token)
+    public async Task<IActionResult> Image(int groupId, [FromForm] UploadImageDto dto, 
+        [FromServices] IValidator<UploadImageDto> validator, CancellationToken token)
     {
+        var validationResult = await validator.ValidateAsync(dto, token);
+        if (!validationResult.IsValid)
+        {
+            return UnprocessableEntity(validationResult.Errors);
+        }
+        
         if (!await IsSessionValid())
             return Unauthorized();
 

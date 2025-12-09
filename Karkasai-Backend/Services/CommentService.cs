@@ -9,6 +9,7 @@ public interface ICommentService
 {
     Task<CommentDto> CreateCommentAsync(int groupId, int postId, CreateCommentDto dto, User user, CancellationToken token = default);
     Task<CommentDto?> GetCommentAsync(int groupId, int postId, int commentId, CancellationToken token = default);
+    Task<CommentDto?> AddCommentImage(int groupId, int postId, int commentId, IFormFile file, CancellationToken token = default);
     Task<IEnumerable<CommentDto>> GetAllCommentsAsync(int groupId, int postId, CancellationToken token = default);
     Task<CommentDto?> UpdateCommentAsync(int groupId, int postId, int commentId, UpdateCommentDto dto, CancellationToken token = default);
     Task<bool> DeleteCommentAsync(int groupId, int postId, int commentId, CancellationToken token = default);
@@ -19,11 +20,13 @@ public class CommentService : ICommentService
 {
     private readonly ICommentRepository _commentRepository;
     private readonly IPostRepository _postRepository;
+    private readonly IImageService _imageService;
 
-    public CommentService(ICommentRepository commentRepository, IPostRepository postRepository)
+    public CommentService(ICommentRepository commentRepository, IPostRepository postRepository, IImageService imageService)
     {
         _commentRepository = commentRepository;
         _postRepository = postRepository;
+        _imageService = imageService;
     }
 
     public async Task<CommentDto> CreateCommentAsync(int groupId, int postId, CreateCommentDto dto, User user, CancellationToken token = default)
@@ -45,6 +48,20 @@ public class CommentService : ICommentService
         await _commentRepository.AddAsync(comment, token);
         await _commentRepository.SaveChangesAsync(token);
 
+        return MapToDto(comment);
+    }
+    
+    public async Task<CommentDto?> AddCommentImage(int groupId, int postId, int commentId, IFormFile? file, CancellationToken token = default)
+    {
+        var comment = await GetCommentEntityAsync(groupId, postId, commentId, token);
+        if (comment == null) return null;
+        
+        var imageUrl = await _imageService.UploadImageAsync(file, "groups");
+        
+        comment.ImageUrl = imageUrl;
+        
+        await _commentRepository.SaveChangesAsync(token);
+        
         return MapToDto(comment);
     }
 
@@ -94,6 +111,7 @@ public class CommentService : ICommentService
             comment.Id,
             comment.Content,
             comment.DateCreated,
+            comment.ImageUrl,
             new UserDto(comment.User.UserName!)
         );
     }

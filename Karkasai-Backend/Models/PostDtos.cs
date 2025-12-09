@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace HabitTribe.Models;
 
-public record PostDto(int Id, string Title, DateTimeOffset DateCreated, UserDto User);
+public record PostDto(int Id, string Title, DateTimeOffset DateCreated, string ImageUrl, UserDto User);
 
 public record CreatePostDto(string Title);
 

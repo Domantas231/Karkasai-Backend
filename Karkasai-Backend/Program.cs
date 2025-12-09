@@ -146,7 +146,7 @@ namespace HabitTribe
 
         public IActionResult CreateActionResult(ActionExecutingContext context, ValidationProblemDetails? validationProblemDetails)
         {
-            throw new NotImplementedException();
+            return new UnprocessableEntityObjectResult(validationProblemDetails);
         }
     }
 }

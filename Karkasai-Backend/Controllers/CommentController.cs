@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using FluentValidation;
+using HabitTribe.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +18,24 @@ public class CommentController : ControllerBase
     private readonly ICommentService _commentService;
     private readonly IGroupService _groupService;
     private readonly UserManager<User> _userManager;
+    private readonly IJwtTokenService _jwtTokenService;
+    private readonly ISessionService _sessionService;
+    private readonly IValidator<UploadImageDto> _uploadImageValidator;
 
     public CommentController(
         ICommentService commentService,
         IGroupService groupService,
-        UserManager<User> userManager)
+        UserManager<User> userManager,
+        IJwtTokenService jwtTokenService,
+        ISessionService sessionService,
+        IValidator<UploadImageDto> uploadImageValidator)
     {
         _commentService = commentService;
         _groupService = groupService;
         _userManager = userManager;
+        _jwtTokenService = jwtTokenService;
+        _sessionService = sessionService;
+        _uploadImageValidator = uploadImageValidator;
     }
 
     [HttpGet]
@@ -70,6 +81,32 @@ public class CommentController : ControllerBase
         {
             return NotFound();
         }
+    }
+    
+    [HttpPut("{commentId}/image")]
+    [Authorize(Roles = Roles.User)]
+    public async Task<IActionResult> Image(int groupId, int postId, int commentId, [FromForm] UploadImageDto dto, 
+        [FromServices] IValidator<UploadImageDto> validator, CancellationToken token)
+    {
+        var validationResult = await validator.ValidateAsync(dto, token);
+        if (!validationResult.IsValid)
+        {
+            return UnprocessableEntity(validationResult.Errors);
+        }
+        
+        if (!await IsSessionValid())
+            return Unauthorized();
+
+        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var isAdmin = User.IsInRole(Roles.Admin);
+
+        //if (!await _postService.IsUserOwnerOrAdmin(groupId, userId!, isAdmin, token))
+        //    return Forbid();
+        
+        var group = await _commentService.AddCommentImage(groupId, postId, commentId, dto.Image, token);
+        if(group == null) return NotFound();
+        
+        return Ok();
     }
 
     [HttpPut("{commentId}")]
@@ -118,5 +155,19 @@ public class CommentController : ControllerBase
         if (group == null) return false;
 
         return group.Members.Any(m => m.Id == userId);
+    }
+    
+    private async Task<bool> IsSessionValid()
+    {
+        if (!Request.Cookies.TryGetValue("RefreshToken", out var refreshToken))
+            return false;
+
+        if (!_jwtTokenService.TryParseRefreshToken(refreshToken, out var claims))
+            return false;
+
+        var sessionId = claims?.FindFirstValue("SessionId");
+        if (string.IsNullOrWhiteSpace(sessionId)) return false;
+
+        return await _sessionService.IsSessionValidAsync(Guid.Parse(sessionId), refreshToken);
     }
 }

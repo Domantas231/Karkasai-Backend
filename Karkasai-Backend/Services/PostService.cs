@@ -9,6 +9,7 @@ public interface IPostService
 {
     Task<PostDto> CreatePostAsync(int groupId, CreatePostDto dto, User user, CancellationToken token = default);
     Task<PostDto?> GetPostAsync(int groupId, int postId, CancellationToken token = default);
+    Task<PostDto?> AddPostImage(int groupId, int postId, IFormFile file, CancellationToken token = default);
     Task<IEnumerable<PostDto>> GetAllPostsAsync(int groupId, CancellationToken token = default);
     Task<PostDto?> UpdatePostAsync(int groupId, int postId, UpdatePostDto dto, CancellationToken token = default);
     Task<bool> DeletePostAsync(int groupId, int postId, CancellationToken token = default);
@@ -19,11 +20,13 @@ public class PostService : IPostService
 {
     private readonly IPostRepository _postRepository;
     private readonly IGroupRepository _groupRepository;
+    private readonly IImageService _imageService;
 
-    public PostService(IPostRepository postRepository, IGroupRepository groupRepository)
+    public PostService(IPostRepository postRepository, IGroupRepository groupRepository, IImageService imageService)
     {
         _postRepository = postRepository;
         _groupRepository = groupRepository;
+        _imageService = imageService;
     }
 
     public async Task<PostDto> CreatePostAsync(int groupId, CreatePostDto dto, User user, CancellationToken token = default)
@@ -48,6 +51,21 @@ public class PostService : IPostService
         return MapToDto(post);
     }
 
+    // TODO: change it to bool? Dont need to return groupdto
+    public async Task<PostDto?> AddPostImage(int groupId, int postId, IFormFile? file, CancellationToken token = default)
+    {
+        var post = await GetPostEntityAsync(groupId, postId, token);
+        if (post == null) return null;
+        
+        var imageUrl = await _imageService.UploadImageAsync(file, "posts");
+        
+        post.ImageUrl = imageUrl;
+        
+        await _groupRepository.SaveChangesAsync(token);
+        
+        return MapToDto(post);
+    }
+    
     public async Task<PostDto?> GetPostAsync(int groupId, int postId, CancellationToken token = default)
     {
         var post = await _postRepository.FindWithUserAsync(groupId, postId, token);
@@ -94,6 +112,7 @@ public class PostService : IPostService
             post.Id,
             post.Title,
             post.DateCreated,
+            post.ImageUrl,
             new UserDto(post.User.UserName!)
         );
     }
