@@ -44,7 +44,7 @@ public class AdminController : ControllerBase
             g.DateCreated,
             OwnerUser = new UserDto(g.OwnerUser.UserName!),
             Members = g.Members.Select(m => new UserDto(m.UserName!)).ToList(),
-            Tags = g.Tags.Select(t => new TagDto(t.Id, t.Name!)).ToList(),
+            Tags = g.Tags.Select(t => new TagDto(t.Id, t.Name!, t.Usable)).ToList(),
             Posts = g.Posts.Select(p => new 
             {
                 p.Id,

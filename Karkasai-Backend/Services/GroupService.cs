@@ -8,6 +8,7 @@ namespace HabitTribe.Services;
 public interface IGroupService
 {
     Task<GroupDto> CreateGroupAsync(CreateGroupDto dto, User ownerUser, CancellationToken token = default);
+    Task<GroupDto?> AddGroupImage(int id, IFormFile file, CancellationToken token = default);
     Task<GroupDto?> GetGroupAsync(int id, CancellationToken token = default);
     Task<IEnumerable<GroupDto>> GetAllGroupsAsync(CancellationToken token = default);
     Task<GroupDto?> UpdateGroupAsync(int id, UpdateGroupDto dto, CancellationToken token = default);
@@ -21,11 +22,13 @@ public class GroupService : IGroupService
 {
     private readonly IGroupRepository _groupRepository;
     private readonly ITagService _tagService;
+    private readonly IImageService _imageService;
 
-    public GroupService(IGroupRepository groupRepository, ITagService tagService)
+    public GroupService(IGroupRepository groupRepository, ITagService tagService, IImageService imageService)
     {
         _groupRepository = groupRepository;
         _tagService = tagService;
+        _imageService = imageService;
     }
 
     public async Task<GroupDto> CreateGroupAsync(CreateGroupDto dto, User ownerUser, CancellationToken token = default)
@@ -40,6 +43,7 @@ public class GroupService : IGroupService
             MaxMembers = dto.MaxMembers,
             CurrentMembers = 1,
             DateCreated = DateTimeOffset.UtcNow,
+            ImageUrl = null,
             OwnerUserId = ownerUser.Id,
             OwnerUser = ownerUser,
             Members = new List<User> { ownerUser },
@@ -47,6 +51,19 @@ public class GroupService : IGroupService
         };
         
         await _groupRepository.AddAsync(group, token);
+        await _groupRepository.SaveChangesAsync(token);
+        
+        return MapToDto(group);
+    }
+
+    // TODO: change it to bool? Dont need to return groupdto
+    public async Task<GroupDto?> AddGroupImage(int id, IFormFile? file, CancellationToken token = default)
+    {
+        var group = await GetGroupEntityAsync(id, token);
+        var imageUrl = await _imageService.UploadImageAsync(file, "groups");
+        
+        group.ImageUrl = imageUrl;
+        
         await _groupRepository.SaveChangesAsync(token);
         
         return MapToDto(group);
@@ -136,9 +153,10 @@ public class GroupService : IGroupService
             group.CurrentMembers,
             group.MaxMembers,
             group.DateCreated,
+            group.ImageUrl,
             new UserDto(group.OwnerUser.UserName!),
             group.Members.Select(m => new UserDto(m.UserName!)).ToList(),
-            group.Tags.Select(t => new TagDto(t.Id, t.Name!)).ToList()
+            group.Tags.Select(t => new TagDto(t.Id, t.Name!, t.Usable)).ToList()
         );
     }
 }

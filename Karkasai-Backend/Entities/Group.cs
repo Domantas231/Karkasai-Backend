@@ -12,6 +12,8 @@ public class Group : BaseEntity
     public int MaxMembers { get; set; }
     public DateTimeOffset DateCreated { get; set; }
     
+    public string? ImageUrl { get; set; }
+    
     [Required]
     public required string OwnerUserId { get; set; }
     

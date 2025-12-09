@@ -160,3 +160,5 @@
 /Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/obj/Debug/net8.0/Karkasai-Backend.pdb
 /Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/obj/Debug/net8.0/Karkasai-Backend.genruntimeconfig.cache
 /Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/obj/Debug/net8.0/ref/Karkasai-Backend.dll
+/Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/CloudinaryDotNet.dll
+/Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/Newtonsoft.Json.dll

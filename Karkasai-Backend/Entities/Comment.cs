@@ -9,6 +9,8 @@ public class Comment : BaseEntity
     public required string Content { get; set; }
     public DateTimeOffset DateCreated { get; set; }
 
+    public string? ImageUrl { get; set; }
+    
     [Required]
     public required string UserId { get; set; }
     

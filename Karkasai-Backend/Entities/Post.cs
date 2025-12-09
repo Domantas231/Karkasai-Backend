@@ -9,6 +9,8 @@ public class Post : BaseEntity
     public required string Title { get; set; }
     public required DateTimeOffset DateCreated { get; set; }
     
+    public string? ImageUrl { get; set; }
+    
     [Required]
     public required string UserId { get; set; }
     

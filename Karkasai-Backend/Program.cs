@@ -83,6 +83,7 @@ builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 // Register Auth Services
 builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();

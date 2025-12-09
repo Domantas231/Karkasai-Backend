@@ -29,6 +29,7 @@ public class TagService : ITagService
         var tag = new Tag
         {
             Name = tagDto.Name,
+            Usable = true,
             Groups = new List<Group>() {}
         };
 
@@ -56,6 +57,7 @@ public class TagService : ITagService
         if (tag == null) return null;
 
         tag.Name = tagDto.Name;
+        tag.Usable = tagDto.Usable;
 
         await _tagRepository.SaveChangesAsync(token);
 
@@ -82,7 +84,8 @@ public class TagService : ITagService
     {
         return new TagDto(
             tag.Id,
-            tag.Name
+            tag.Name,
+            tag.Usable
         );
     }
 }

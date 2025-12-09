@@ -2,8 +2,8 @@ using FluentValidation;
 
 namespace HabitTribe.Models;
 
-public record TagDto(int Id, string Name);
-public record CreateUpdateTagDto(int Id, string Name);
+public record TagDto(int Id, string Name, bool Usable);
+public record CreateUpdateTagDto(int Id, string Name, bool Usable);
 
 public class TagDtoValidator : AbstractValidator<CreateUpdateTagDto>
 {

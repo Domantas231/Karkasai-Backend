@@ -9,6 +9,7 @@ public record GroupDto(
     int CurrentMembers, 
     int MaxMembers, 
     DateTimeOffset DateCreated, 
+    string ImageUrl,
     UserDto OwnerUser, 
     ICollection<UserDto> Members,
     ICollection<TagDto> Tags);

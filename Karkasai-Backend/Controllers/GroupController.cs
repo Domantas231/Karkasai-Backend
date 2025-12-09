@@ -46,7 +46,7 @@ public class GroupController : ControllerBase
 
         return Ok(group);
     }
-
+    
     [HttpPost]
     [Authorize(Roles = Roles.User)]
     public async Task<IActionResult> Create([FromBody] CreateGroupDto dto, CancellationToken token)
@@ -81,7 +81,24 @@ public class GroupController : ControllerBase
 
         return Ok(group);
     }
+    
+    [HttpPut("{groupId}/image")]
+    [Authorize(Roles = Roles.User)]
+    public async Task<IActionResult> Create(int groupId, [FromForm] IFormFile? image, CancellationToken token)
+    {
+        if (!await IsSessionValid())
+            return Unauthorized();
 
+        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var isAdmin = User.IsInRole(Roles.Admin);
+
+        if (!await _groupService.IsUserOwnerOrAdmin(groupId, userId!, isAdmin, token))
+            return Forbid();
+        
+        await _groupService.AddGroupImage(groupId, image, token);
+        return Ok();
+    }
+    
     [HttpPut("{groupId}/join")]
     [Authorize]
     public async Task<IActionResult> Join(int groupId, CancellationToken token)
