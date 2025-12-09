@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "1becftZIq7U=",
+  "dgSpecHash": "R7Syn24P8Jw=",
   "success": true,
   "projectFilePath": "/Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/Karkasai-Backend.csproj",
   "expectedPackageFiles": [
@@ -91,6 +91,7 @@
     "/Users/domantas/.nuget/packages/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl/4.3.2/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "/Users/domantas/.nuget/packages/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.2/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "/Users/domantas/.nuget/packages/sharpgrip.fluentvalidation.autovalidation.endpoints/1.5.0/sharpgrip.fluentvalidation.autovalidation.endpoints.1.5.0.nupkg.sha512",
+    "/Users/domantas/.nuget/packages/sharpgrip.fluentvalidation.autovalidation.mvc/1.5.0/sharpgrip.fluentvalidation.autovalidation.mvc.1.5.0.nupkg.sha512",
     "/Users/domantas/.nuget/packages/sharpgrip.fluentvalidation.autovalidation.shared/1.5.0/sharpgrip.fluentvalidation.autovalidation.shared.1.5.0.nupkg.sha512",
     "/Users/domantas/.nuget/packages/swashbuckle.aspnetcore/6.6.2/swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
     "/Users/domantas/.nuget/packages/swashbuckle.aspnetcore.swagger/6.6.2/swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",

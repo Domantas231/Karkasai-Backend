@@ -19,6 +19,7 @@
           "Microsoft.EntityFrameworkCore.Tools": "9.0.10",
           "Pomelo.EntityFrameworkCore.MySql": "9.0.0",
           "SharpGrip.FluentValidation.AutoValidation.Endpoints": "1.5.0",
+          "SharpGrip.FluentValidation.AutoValidation.Mvc": "1.5.0",
           "Swashbuckle.AspNetCore": "6.6.2"
         },
         "runtime": {
@@ -949,6 +950,17 @@
         },
         "runtime": {
           "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Endpoints.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "SharpGrip.FluentValidation.AutoValidation.Mvc/1.5.0": {
+        "dependencies": {
+          "SharpGrip.FluentValidation.AutoValidation.Shared": "1.5.0"
+        },
+        "runtime": {
+          "lib/net8.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -2130,6 +2142,13 @@
       "sha512": "sha512-yHzwvFI89/vA8kfFnRuR+CZIBhKWUCa/Qye9YpgB6lhQnV4WNKB5S1YblMdTq2Q/XYqiWlXVaO+Vr5t6GpmHKA==",
       "path": "sharpgrip.fluentvalidation.autovalidation.endpoints/1.5.0",
       "hashPath": "sharpgrip.fluentvalidation.autovalidation.endpoints.1.5.0.nupkg.sha512"
+    },
+    "SharpGrip.FluentValidation.AutoValidation.Mvc/1.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gqzRTuyZSn8eGbOg0OVQIY9mHCW78WMq1sLg+tqTDQVZJC/clbi9g9AV0ErZj1PZfuGIqG35cBo32Px0MVW5Ow==",
+      "path": "sharpgrip.fluentvalidation.autovalidation.mvc/1.5.0",
+      "hashPath": "sharpgrip.fluentvalidation.autovalidation.mvc.1.5.0.nupkg.sha512"
     },
     "SharpGrip.FluentValidation.AutoValidation.Shared/1.5.0": {
       "type": "package",

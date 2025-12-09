@@ -60,6 +60,8 @@ public class GroupService : IGroupService
     public async Task<GroupDto?> AddGroupImage(int id, IFormFile? file, CancellationToken token = default)
     {
         var group = await GetGroupEntityAsync(id, token);
+        if (group == null) return null;
+        
         var imageUrl = await _imageService.UploadImageAsync(file, "groups");
         
         group.ImageUrl = imageUrl;

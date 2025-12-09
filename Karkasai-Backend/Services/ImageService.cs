@@ -25,8 +25,6 @@ public class ImageService : IImageService
 
     public async Task<string?> UploadImageAsync(IFormFile file, string folder)
     {
-        if (file.Length <= 0) return null;
-
         await using var stream = file.OpenReadStream();
         var uploadParams = new ImageUploadParams
         {

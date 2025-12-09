@@ -84,7 +84,7 @@ public class GroupController : ControllerBase
     
     [HttpPut("{groupId}/image")]
     [Authorize(Roles = Roles.User)]
-    public async Task<IActionResult> Create(int groupId, [FromForm] IFormFile? image, CancellationToken token)
+    public async Task<IActionResult> AddImage(int groupId, [FromForm] UploadImageDto dto, CancellationToken token)
     {
         if (!await IsSessionValid())
             return Unauthorized();
@@ -95,7 +95,9 @@ public class GroupController : ControllerBase
         if (!await _groupService.IsUserOwnerOrAdmin(groupId, userId!, isAdmin, token))
             return Forbid();
         
-        await _groupService.AddGroupImage(groupId, image, token);
+        var group = await _groupService.AddGroupImage(groupId, dto.Image, token);
+        if(group == null) return NotFound();
+        
         return Ok();
     }
     

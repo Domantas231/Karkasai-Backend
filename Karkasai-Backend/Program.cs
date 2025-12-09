@@ -9,11 +9,15 @@ using HabitTribe.Repositories;
 using HabitTribe.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
-using SharpGrip.FluentValidation.AutoValidation.Endpoints.Results;
+//using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
+//using SharpGrip.FluentValidation.AutoValidation.Endpoints.Results;
 using SharpGrip.FluentValidation.AutoValidation.Shared.Extensions;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Results;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -138,6 +142,11 @@ namespace HabitTribe
             };
           
             return Results.Problem(problemDetails);
+        }
+
+        public IActionResult CreateActionResult(ActionExecutingContext context, ValidationProblemDetails? validationProblemDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }
