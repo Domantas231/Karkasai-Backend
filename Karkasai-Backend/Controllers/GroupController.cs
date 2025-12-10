@@ -111,6 +111,25 @@ public class GroupController : ControllerBase
         
         return Ok();
     }
+
+    [HttpDelete("{groupId}/image")]
+    [Authorize(Roles = Roles.User)]
+    public async Task<IActionResult> Image(int groupId, CancellationToken token)
+    {
+        if (!await IsSessionValid())
+            return Unauthorized();
+
+        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var isAdmin = User.IsInRole(Roles.Admin);
+        
+        if (!await _groupService.IsUserOwnerOrAdmin(groupId, userId!, isAdmin, token))
+            return Forbid();
+        
+        var result = await _groupService.DeleteGroupImage(groupId, token);
+        if (!result) return NotFound();
+        
+        return Ok();
+    }
     
     [HttpPut("{groupId}/join")]
     [Authorize]

@@ -9,6 +9,7 @@ public interface IGroupService
 {
     Task<GroupDto> CreateGroupAsync(CreateGroupDto dto, User ownerUser, CancellationToken token = default);
     Task<GroupDto?> AddGroupImage(int id, IFormFile file, CancellationToken token = default);
+    Task<bool> DeleteGroupImage(int id, CancellationToken token = default);
     Task<GroupDto?> GetGroupAsync(int id, CancellationToken token = default);
     Task<IEnumerable<GroupDto>> GetAllGroupsAsync(CancellationToken token = default);
     Task<GroupDto?> UpdateGroupAsync(int id, UpdateGroupDto dto, CancellationToken token = default);
@@ -69,6 +70,20 @@ public class GroupService : IGroupService
         await _groupRepository.SaveChangesAsync(token);
         
         return MapToDto(group);
+    }
+
+    public async Task<bool> DeleteGroupImage(int id, CancellationToken token = default)
+    {
+        var group = await GetGroupEntityAsync(id, token);
+        if (group == null) return false;
+
+        var result = await _imageService.DeleteImageByUrlAsync(group.ImageUrl);
+        if(!result) return false;
+        
+        group.ImageUrl = null;
+        await _groupRepository.SaveChangesAsync(token);
+        
+        return true;
     }
 
     public async Task<GroupDto?> GetGroupAsync(int id, CancellationToken token = default)
