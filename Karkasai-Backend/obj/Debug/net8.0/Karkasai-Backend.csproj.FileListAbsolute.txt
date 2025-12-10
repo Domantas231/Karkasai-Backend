@@ -163,3 +163,6 @@
 /Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/CloudinaryDotNet.dll
 /Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/Newtonsoft.Json.dll
 /Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll
+/Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/Microsoft.AspNetCore.Connections.Abstractions.dll
+/Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/Microsoft.AspNetCore.SignalR.Common.dll
+/Users/domantas/Documents/GitHub/Karkasai-Backend/Karkasai-Backend/bin/Debug/net8.0/Microsoft.Extensions.Features.dll

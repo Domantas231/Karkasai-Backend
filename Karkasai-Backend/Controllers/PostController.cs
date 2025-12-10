@@ -17,6 +17,7 @@ public class PostController : ControllerBase
 {
     private readonly IPostService _postService;
     private readonly IGroupService _groupService;
+    private readonly INotificationService _notificationService;
     private readonly UserManager<User> _userManager;
     private readonly IValidator<UploadImageDto> _uploadImageValidator;
     private readonly ISessionService _sessionService;
@@ -25,6 +26,7 @@ public class PostController : ControllerBase
     public PostController(
         IPostService postService,
         IGroupService groupService,
+        INotificationService notificationService,
         UserManager<User> userManager,
         IJwtTokenService jwtTokenService,
         ISessionService sessionService,
@@ -32,6 +34,7 @@ public class PostController : ControllerBase
     {
         _postService = postService;
         _groupService = groupService;
+        _notificationService = notificationService;
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
         _sessionService = sessionService;
@@ -86,6 +89,11 @@ public class PostController : ControllerBase
         try
         {
             var post = await _postService.CreatePostAsync(groupId, dto, user, token);
+            
+            // Notification
+            var group = await _groupService.GetGroupAsync(groupId);
+            await _notificationService.NotifyNewPostAsync(groupId, group.Title, post);
+            
             return Created($"api/groups/{groupId}/posts/{post.Id}", post);
         }
         catch (InvalidOperationException)
@@ -157,6 +165,8 @@ public class PostController : ControllerBase
 
         var post = await _postService.UpdatePostAsync(groupId, postId, dto, token);
         if (post == null) return NotFound();
+        
+        await _notificationService.NotifyPostUpdatedAsync(groupId, post);
 
         return Ok(post);
     }
@@ -179,6 +189,8 @@ public class PostController : ControllerBase
 
         var deleted = await _postService.DeletePostAsync(groupId, postId, token);
         if (!deleted) return NotFound();
+        
+        await _notificationService.NotifyPostDeletedAsync(groupId, postId);
 
         return NoContent();
     }

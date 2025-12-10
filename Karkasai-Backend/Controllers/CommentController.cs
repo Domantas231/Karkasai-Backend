@@ -17,6 +17,7 @@ public class CommentController : ControllerBase
 {
     private readonly ICommentService _commentService;
     private readonly IGroupService _groupService;
+    private readonly INotificationService _notificationService;
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly ISessionService _sessionService;
@@ -25,6 +26,7 @@ public class CommentController : ControllerBase
     public CommentController(
         ICommentService commentService,
         IGroupService groupService,
+        INotificationService notificationService,
         UserManager<User> userManager,
         IJwtTokenService jwtTokenService,
         ISessionService sessionService,
@@ -32,6 +34,7 @@ public class CommentController : ControllerBase
     {
         _commentService = commentService;
         _groupService = groupService;
+        _notificationService = notificationService;
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
         _sessionService = sessionService;
@@ -75,6 +78,9 @@ public class CommentController : ControllerBase
         try
         {
             var comment = await _commentService.CreateCommentAsync(groupId, postId, dto, user, token);
+            
+            await _notificationService.NotifyNewCommentAsync(groupId, postId, comment);
+            
             return Created($"api/groups/{groupId}/posts/{postId}/comments/{comment.Id}", comment);
         }
         catch (InvalidOperationException)

@@ -5,6 +5,7 @@ using HabitTribe;
 using HabitTribe.Auth;
 using HabitTribe.Auth.Model;
 using HabitTribe.Data;
+using HabitTribe.Hubs;
 using HabitTribe.Repositories;
 using HabitTribe.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,6 +41,9 @@ builder.Services.AddCors(options =>
 // Add controllers
 builder.Services.AddControllers();
 
+// Add SignalR
+builder.Services.AddSignalR();
+
 // Add FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation(configuration =>
@@ -69,7 +73,27 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
-        ValidateIssuerSigningKey = true
+        ValidateIssuerSigningKey = true,
+        NameClaimType = "sub"
+    };
+    
+    // Configure JWT for SignalR
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            // Read the token from query string for SignalR connections
+            var accessToken = context.Request.Query["access_token"];
+            
+            // If the request is for our hub...
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+            {
+                // Read the token out of the query string
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -87,7 +111,9 @@ builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<ITagService, TagService>();
+
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 // Register Auth Services
 builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
@@ -125,6 +151,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Map SignalR hub
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
 
