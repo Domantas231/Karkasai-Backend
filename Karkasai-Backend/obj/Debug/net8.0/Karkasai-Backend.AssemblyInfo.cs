@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Karkasai-Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e122d5441429ab6fd2df06fcd6e857e8ee3d16aa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4db7509437fb7ab159dfd279d16cd978be2705ea")]
 [assembly: System.Reflection.AssemblyProductAttribute("Karkasai-Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Karkasai-Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
