@@ -108,6 +108,25 @@ public class CommentController : ControllerBase
         
         return Ok();
     }
+    
+    [HttpDelete("{commentId}/image")]
+    [Authorize(Roles = Roles.User)]
+    public async Task<IActionResult> Image(int groupId, int postId, int commentId, CancellationToken token)
+    {
+        if (!await IsSessionValid())
+            return Unauthorized();
+
+        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var isAdmin = User.IsInRole(Roles.Admin);
+        
+        // if (!await _groupService.IsUserOwnerOrAdmin(groupId, userId!, isAdmin, token))
+        //     return Forbid();
+        
+        var result = await _commentService.DeleteCommentImage(groupId, postId, commentId, token);
+        if (!result) return NotFound();
+        
+        return Ok();
+    }
 
     [HttpPut("{commentId}")]
     [Authorize]

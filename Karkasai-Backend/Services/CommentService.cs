@@ -10,6 +10,7 @@ public interface ICommentService
     Task<CommentDto> CreateCommentAsync(int groupId, int postId, CreateCommentDto dto, User user, CancellationToken token = default);
     Task<CommentDto?> GetCommentAsync(int groupId, int postId, int commentId, CancellationToken token = default);
     Task<CommentDto?> AddCommentImage(int groupId, int postId, int commentId, IFormFile file, CancellationToken token = default);
+    Task<bool> DeleteCommentImage(int groupId, int postId, int commentId, CancellationToken token = default);
     Task<IEnumerable<CommentDto>> GetAllCommentsAsync(int groupId, int postId, CancellationToken token = default);
     Task<CommentDto?> UpdateCommentAsync(int groupId, int postId, int commentId, UpdateCommentDto dto, CancellationToken token = default);
     Task<bool> DeleteCommentAsync(int groupId, int postId, int commentId, CancellationToken token = default);
@@ -63,6 +64,20 @@ public class CommentService : ICommentService
         await _commentRepository.SaveChangesAsync(token);
         
         return MapToDto(comment);
+    }
+
+    public async Task<bool> DeleteCommentImage(int groupId, int postId, int commentId, CancellationToken token = default)
+    {
+        var comment = await GetCommentEntityAsync(groupId, postId, commentId, token);
+        if (comment == null) return false;
+
+        var result = await _imageService.DeleteImageByUrlAsync(comment.ImageUrl);
+        if(!result) return false;
+        
+        comment.ImageUrl = null;
+        await _commentRepository.SaveChangesAsync(token);
+        
+        return true;
     }
 
     public async Task<CommentDto?> GetCommentAsync(int groupId, int postId, int commentId, CancellationToken token = default)

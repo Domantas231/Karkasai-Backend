@@ -10,6 +10,7 @@ public interface IPostService
     Task<PostDto> CreatePostAsync(int groupId, CreatePostDto dto, User user, CancellationToken token = default);
     Task<PostDto?> GetPostAsync(int groupId, int postId, CancellationToken token = default);
     Task<PostDto?> AddPostImage(int groupId, int postId, IFormFile file, CancellationToken token = default);
+    Task<bool> DeletePostImage(int groupId, int postId, CancellationToken token = default);
     Task<IEnumerable<PostDto>> GetAllPostsAsync(int groupId, CancellationToken token = default);
     Task<PostDto?> UpdatePostAsync(int groupId, int postId, UpdatePostDto dto, CancellationToken token = default);
     Task<bool> DeletePostAsync(int groupId, int postId, CancellationToken token = default);
@@ -64,6 +65,20 @@ public class PostService : IPostService
         await _groupRepository.SaveChangesAsync(token);
         
         return MapToDto(post);
+    }
+
+    public async Task<bool> DeletePostImage(int groupId, int postId, CancellationToken token = default)
+    {
+        var post = await GetPostEntityAsync(groupId, postId, token);
+        if (post == null) return false;
+
+        var result = await _imageService.DeleteImageByUrlAsync(post.ImageUrl);
+        if(!result) return false;
+        
+        post.ImageUrl = null;
+        await _postRepository.SaveChangesAsync(token);
+        
+        return true;
     }
     
     public async Task<PostDto?> GetPostAsync(int groupId, int postId, CancellationToken token = default)
