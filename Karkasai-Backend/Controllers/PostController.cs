@@ -166,7 +166,8 @@ public class PostController : ControllerBase
         var post = await _postService.UpdatePostAsync(groupId, postId, dto, token);
         if (post == null) return NotFound();
         
-        await _notificationService.NotifyPostUpdatedAsync(groupId, post);
+        var group = await _groupService.GetGroupAsync(groupId);
+        await _notificationService.NotifyPostUpdatedAsync(groupId, post, group.Title);
 
         return Ok(post);
     }
@@ -187,10 +188,12 @@ public class PostController : ControllerBase
         if (existingPost.UserId != userId && !isAdmin)
             return Forbid();
 
+        var group = await _groupService.GetGroupAsync(groupId);
+        
         var deleted = await _postService.DeletePostAsync(groupId, postId, token);
         if (!deleted) return NotFound();
         
-        await _notificationService.NotifyPostDeletedAsync(groupId, postId);
+        await _notificationService.NotifyPostDeletedAsync(groupId, postId, group.Title);
 
         return NoContent();
     }

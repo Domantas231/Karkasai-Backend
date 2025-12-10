@@ -17,6 +17,7 @@ public class CommentController : ControllerBase
 {
     private readonly ICommentService _commentService;
     private readonly IGroupService _groupService;
+    private readonly IPostService _postService;
     private readonly INotificationService _notificationService;
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenService _jwtTokenService;
@@ -26,6 +27,7 @@ public class CommentController : ControllerBase
     public CommentController(
         ICommentService commentService,
         IGroupService groupService,
+        IPostService postService,
         INotificationService notificationService,
         UserManager<User> userManager,
         IJwtTokenService jwtTokenService,
@@ -34,6 +36,7 @@ public class CommentController : ControllerBase
     {
         _commentService = commentService;
         _groupService = groupService;
+        _postService = postService;
         _notificationService = notificationService;
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
@@ -79,7 +82,11 @@ public class CommentController : ControllerBase
         {
             var comment = await _commentService.CreateCommentAsync(groupId, postId, dto, user, token);
             
-            await _notificationService.NotifyNewCommentAsync(groupId, postId, comment);
+            // Get the post to find the author's name
+            var post = await _postService.GetPostAsync(groupId, postId, token);
+            var postAuthorName = post?.User?.UserName ?? "";
+            
+            await _notificationService.NotifyNewCommentAsync(groupId, postId, postAuthorName, comment);
             
             return Created($"api/groups/{groupId}/posts/{postId}/comments/{comment.Id}", comment);
         }

@@ -16,6 +16,7 @@ namespace HabitTribe.Controllers;
 public class GroupController : ControllerBase
 {
     private readonly IGroupService _groupService;
+    private readonly INotificationService _notificationService;
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly ISessionService _sessionService;
@@ -23,12 +24,14 @@ public class GroupController : ControllerBase
 
     public GroupController(
         IGroupService groupService,
+        INotificationService notificationService,
         UserManager<User> userManager,
         IJwtTokenService jwtTokenService,
         ISessionService sessionService,
         IValidator<UploadImageDto> uploadImageValidator)
     {
         _groupService = groupService;
+        _notificationService = notificationService;
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
         _sessionService = sessionService;
@@ -63,6 +66,9 @@ public class GroupController : ControllerBase
         if (ownerUser == null) return Unauthorized();
 
         var group = await _groupService.CreateGroupAsync(dto, ownerUser, token);
+
+        // Notify all users about the new group
+        await _notificationService.NotifyNewGroupAsync(group);
 
         return Created($"api/groups/{group.Id}", group);
     }
